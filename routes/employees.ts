@@ -1,14 +1,14 @@
 import express from "express";
 import prisma from "../prisma";
 const router = express.Router();
-import { verifyToken } from "../middleware/auth"; 
+import { verifyToken , isAdmin } from "../middleware/auth"; 
 router.get("/", verifyToken,async (req, res) => {
   const employees = await prisma.employee.findMany();
   res.json(employees);
 });
 
 router.use(verifyToken);
-router.post("/",verifyToken, async (req, res) => {
+router.post("/",verifyToken,isAdmin, async (req, res) => {
   try {
     const {
       name,
@@ -43,7 +43,7 @@ router.post("/",verifyToken, async (req, res) => {
   }
 });
 
-router.put("/:id", verifyToken,async (req, res) => {
+router.put("/:id", verifyToken,isAdmin,async (req, res) => {
   const id = parseInt(req.params.id);
   try {
     const updatedEmployee = await prisma.employee.update({
@@ -61,7 +61,7 @@ router.put("/:id", verifyToken,async (req, res) => {
     res.status(500).json({ error: "Failed to update employee" });
   }
 });
-router.delete("/:id", verifyToken,async (req, res) => {
+router.delete("/:id", verifyToken,isAdmin,async (req, res) => {
   const id = parseInt(req.params.id);
   try {
     await prisma.employee.delete({ where: { id } });

@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/auth";
 import employeeRoutes from "./routes/employees";
 import {verifyToken}  from "./middleware/auth";
+import prisma from "./db/db.config";
 
 import summaryRoutes from "./routes/summary";
 import departmentRoutes from "./routes/departments";
@@ -31,6 +32,11 @@ app.get("/" , (req , res)=>{
   console.log("ERP Backend is running");
   res.send("ERP Backend is running");
 })
-app.listen(3000, () => {
-  console.log("Server is running on 3000");
+
+app.get("/test-db", async (req, res) => {
+  const departments = await prisma.department.findMany();
+  res.json(departments);
+});
+app.listen(PORT, () => {
+  console.log("Server is running on `${PORT} port`");
 });
